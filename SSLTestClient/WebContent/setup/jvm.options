@@ -1,0 +1,20 @@
+# WebSphere Application Server Liberty
+# This file contains options that are passed directly to the JVM on startup
+# See the InfoCenter for full documentation
+
+# Uncomment the following line to set the maximum heap size to 1024m
+#-Xmx1024m
+
+# Uncomment the following line to set a system property
+#-Dcom.ibm.example.system.property=ExampleValue
+
+# Uncomment the following line to enable verbose output for class loading
+#-verbose:class
+
+#-Dcom.ibm.ws.webcontainer.invokefilterscompatibility=true
+#-Dcom.ibm.ws.webcontainer.mapFiltersToAsterisk=true
+#-Dcom.ibm.ws.webcontainer.removetrailingservletpathslash=true
+#-Djsse.enableSNIExtension=false
+-Dhttps.protocols=TLSv1.1,TLSv1.2
+-Djava.net.preferIPv4Stack=true
+-Djavax.net.debug=ssl,handshake

@@ -1,0 +1,37 @@
+<server description="new server">
+	<featureManager>
+		<feature>jsp-2.3</feature>
+		<feature>ssl-1.0</feature>
+		<feature>servlet-3.1</feature>
+		<feature>localConnector-1.0</feature>
+		<feature>collectiveMember-1.0</feature>
+		<feature>transportSecurity-1.0</feature>
+	</featureManager>
+
+
+	<keyStore fileBased="true" id="MyServerKeyStore"
+		location="${server.config.dir}/resources/security/tClient.keystore"
+		password="{xor}bm1sa2pp" readOnly="false" type="JKS">
+		<keyEntry name="tclient" keyPassword="123456" id="tclient"></keyEntry>
+	</keyStore>
+	<ssl clientAuthentication="false" clientAuthenticationSupported="false"
+		id="MySSLCmd" keyStoreRef="MyServerKeyStore" securityLevel="HIGH"
+		trustStoreRef="MyServerKeyStore" clientKeyAlias="tclient" serverKeyAlias="tclient" sslProtocol="TLSv1.2">
+	</ssl>
+
+	<sslDefault outboundSSLRef="MySSLCmd" />
+	<httpEndpoint enabled="true" host="*" httpPort="8080" httpsPort="8443" id="defaultHttpEndpoint2" onError="WARN">
+
+		<httpOptions />
+
+		<accessLogging />
+
+
+		<sslOptions></sslOptions>
+	</httpEndpoint>
+	<applicationManager autoExpand="true" />
+	<applicationMonitor updateTrigger="mbean" />
+	<webContainer allowExpressionFactoryPerApp="true" defaultHeadRequestBehavior="true" defaultTraceRequestBehavior="true" enableJspMappingOverride="true" exposeWebInfOnDispatch="true" serveServletsByClassnameEnabled="true" />
+	<webApplication id="SSLTestClient" location="SSLTestClient.war"
+		name="SSLTestClient" />
+</server>

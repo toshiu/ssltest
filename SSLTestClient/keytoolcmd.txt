@@ -1,0 +1,56 @@
+作成Server密钥库(所有信息都host名，即为adminib-opi4vn1，因为会被check)
+keytool -genkey -v -alias tServer -keyalg RSA -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore -validity 36500
+密钥库密码和密钥密码：123456
+
+作成Server证书的签发请求
+keytool -certreq -alias tServer -file C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.csr -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore -validity 36500
+
+用rootca签发Server证书
+keytool -gencert -alias rootca -infile C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.csr -rfc -outfile C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\root\rootca.keystore
+
+将根证书导入Server中，并信任，建立证书链底层
+keytool -importcert -alias rootca -file C:\Users\IBM_ADMIN\Desktop\cert0409\root\rootca.cer -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore
+
+将签发完的Server证书导回Server密钥库，建立证书链
+keytool -importcert -alias tServer -file C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore
+
+----------------------------------------------------------------------------------------------------------------------------
+
+作成Client密钥库(所有信息都host名，即为localhost，因为会被check)
+keytool -genkey -v -alias tClient -keyalg RSA -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore -validity 36500
+密钥库密码和密钥密码：123456
+
+作成Client证书的签发请求
+keytool -certreq -alias tClient -file C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.csr -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore -validity 36500
+
+用Server签发Client证书
+keytool -gencert -alias tServer -infile C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.csr -rfc -outfile C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore
+
+将根证书导入Client中，并信任，建立证书链第一层
+keytool -importcert -alias rootca -file C:\Users\IBM_ADMIN\Desktop\cert0409\root\rootca.cer -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore
+
+将服务端证书导入Client中，并信任，建立证书第二层
+keytool -importcert -alias tServer -file C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore
+
+将签发完的Client证书导回Client密钥库，建立证书链
+keytool -importcert -alias tClient -file C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore
+
+----------------------------------------------------------------------------------------------------------------------------
+
+导入服务端证书到Client端的密钥信任库里
+keytool -importcert -alias tServer -file C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore
+
+导入客户端证书到Server端的密钥信任库里
+keytool -importcert -alias tClient -file C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.crt -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore
+------
+
+
+-----------------------------------------------------
+
+	
+keytool -importkeystore -destkeystore new.p12 -deststoretype pkcs12 -srckeystore original.pfx
+keytool -importkeystore -v  -srckeystore src.pfx -srcstoretype pkcs12 -srcstorepass 123456 -destkeystore dest.keystore -deststoretype jks -deststorepass 123456
+
+keytool -list -v -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\client\tClient.keystore
+
+keytool -delete -alias tClient -storepass 123456 -keystore C:\Users\IBM_ADMIN\Desktop\cert0409\server\tServer.keystore
